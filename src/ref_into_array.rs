@@ -10,7 +10,7 @@ pub trait Effect {
 
 struct Patch<'a> {
     effects: Vec<(Note, Box<Effect>)>,
-    running_effects: Vec<&'a mut Effect>,
+    running_effects: Vec<&'a mut Box<Effect>>,
 }
 
 impl<'a> Patch<'a> {
@@ -30,8 +30,17 @@ impl<'a> Patch<'a> {
                 effect.stop();
             }
 
+
+            // This does not compile
+
+            //            for &mut (_, ref mut eff) in self.effects.iter_mut() {
+            //                if eff.is_running() {
+            //                    eff.stop();
+            //                }
+            //            }
+
             // start new effects
-            for &mut(_, ref mut  effect) in triggered_effects {
+            for &mut (_, ref mut effect) in triggered_effects {
                 effect.start();
                 //self.running_effects.push(effect);
             }
@@ -53,7 +62,6 @@ impl<'a> Patch<'a> {
             }
         }
     }
-
 }
 
 
